@@ -1,0 +1,23 @@
+# Credenciales
+.aws/
+.env
+*.env
+*.pem
+*.key
+credentials*
+
+# Python y empaquetado
+__pycache__/
+*.pyc
+.venv/
+venv/
+build/
+dist/
+*.zip
+
+# Sistema y editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+
