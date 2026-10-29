@@ -15,6 +15,7 @@
 - Viewer protocol policy: redirección de HTTP a HTTPS.
 - Default root object: index.html.
 - Prueba: la web carga por HTTPS y el acceso directo al bucket devuelve AccessDenied.
+- Tras cada subida de la web, invalidar /* en CloudFront. Si no, el navegador o la caché pueden seguir mostrando la versión anterior; podria solucionarse eliminando caché de CLoudfront, pero en un entorno real quizá sea poco práctico. 
 
 ## Fase 2: autenticación
 
@@ -23,4 +24,4 @@
 - Cliente de aplicación sin secreto, porque la web se ejecuta en el navegador.
 - Flujo de concesión de código de autorización, con los ámbitos OpenID, correo electrónico y perfil.
 - Prueba: registro e inicio de sesión completados, con redirección a CloudFront.
-- - Mejoras posibles: activar MFA y limitar el registro, si la aplicación fuera de uso real.
+- Mejoras posibles: activar MFA y limitar el registro si la aplicación fuera de uso real, por ejemplo, para que solo se puedan registrar personas de una organizacion con un correo especifico.
