@@ -7,6 +7,43 @@
 <body>
   <h1>Gestión de incidencias</h1>
   <p>Página inicial.</p>
-  <a href="https://eu-west-1hv919bloz.auth.eu-west-1.amazoncognito.com/login?client_id=51k0hhrmfhv2gq43724djc1mf4&amp;response_type=code&amp;scope=openid+email&amp;redirect_uri=https%3A%2F%2Fd2kqqlxt0valpy.cloudfront.net">Iniciar sesión</a>
+  <button id="login">Iniciar sesión</button>
+
+  <script>
+    const COGNITO_DOMAIN = "https://eu-west-1hv919bloz.auth.eu-west-1.amazoncognito.com";
+    const CLIENT_ID = "51k0hhrmfhv2gq43724djc1mf4";
+    const REDIRECT_URI = "https://d2kqqlxt0valpy.cloudfront.net";
+
+    function generarAleatorio(longitud) {
+      const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+      const valores = crypto.getRandomValues(new Uint8Array(longitud));
+      return Array.from(valores, v => caracteres[v % caracteres.length]).join("");
+    }
+
+    async function sha256(texto) {
+      const datos = new TextEncoder().encode(texto);
+      return new Uint8Array(await crypto.subtle.digest("SHA-256", datos));
+    }
+
+    function base64url(bytes) {
+      return btoa(String.fromCharCode(...bytes))
+        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    document.getElementById("login").addEventListener("click", async () => {
+      const verifier = generarAleatorio(64);
+      sessionStorage.setItem("pkce_verifier", verifier);
+      const challenge = base64url(await sha256(verifier));
+
+      const url = new URL(COGNITO_DOMAIN + "/login");
+      url.searchParams.set("client_id", CLIENT_ID);
+      url.searchParams.set("response_type", "code");
+      url.searchParams.set("scope", "openid email");
+      url.searchParams.set("redirect_uri", REDIRECT_URI);
+      url.searchParams.set("code_challenge_method", "S256");
+      url.searchParams.set("code_challenge", challenge);
+      window.location.href = url.toString();
+    });
+  </script>
 </body>
 </html>
