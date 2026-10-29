@@ -23,3 +23,4 @@
 - Cliente de aplicación sin secreto, porque la web se ejecuta en el navegador.
 - Flujo de concesión de código de autorización, con los ámbitos OpenID, correo electrónico y perfil.
 - Prueba: registro e inicio de sesión completados, con redirección a CloudFront.
+- - Mejoras posibles: activar MFA y limitar el registro, si la aplicación fuera de uso real.
