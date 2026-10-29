@@ -16,3 +16,10 @@
 - Default root object: index.html.
 - Prueba: la web carga por HTTPS y el acceso directo al bucket devuelve AccessDenied.
 
+## Fase 2: autenticación
+
+- Grupo de usuarios de Cognito en eu-west-1, con plan Básico.
+- Inicio de sesión por correo electrónico, con autorregistro y verificación por correo.
+- Cliente de aplicación sin secreto, porque la web se ejecuta en el navegador.
+- Flujo de concesión de código de autorización, con los ámbitos OpenID, correo electrónico y perfil.
+- Prueba: registro e inicio de sesión completados, con redirección a CloudFront.
