@@ -6,7 +6,7 @@
 </head>
 <body>
   <h1>Gestión de incidencias</h1>
-  <p>Página inicial.</p>
+  <p id="estado">Cargando...</p>
   <button id="login">Iniciar sesión</button>
 
   <script>
@@ -44,6 +44,15 @@
       url.searchParams.set("code_challenge", challenge);
       window.location.href = url.toString();
     });
+
+    // Nuevo: comprobar si Cognito nos ha devuelto un código
+    const codigo = new URLSearchParams(window.location.search).get("code");
+    const estado = document.getElementById("estado");
+    if (codigo) {
+      estado.textContent = "Código recibido de Cognito. Pendiente de canjear.";
+    } else {
+      estado.textContent = "Página inicial. No hay sesión iniciada.";
+    }
   </script>
 </body>
 </html>
