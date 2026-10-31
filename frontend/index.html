@@ -30,6 +30,23 @@
         .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     }
 
+    async function canjearCodigo(codigo) {
+      const verifier = sessionStorage.getItem("pkce_verifier");
+      const cuerpo = new URLSearchParams({
+        grant_type: "authorization_code",
+        client_id: CLIENT_ID,
+        code: codigo,
+        redirect_uri: REDIRECT_URI,
+        code_verifier: verifier
+      });
+      const respuesta = await fetch(COGNITO_DOMAIN + "/oauth2/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: cuerpo
+      });
+      return respuesta.json();
+    }
+
     document.getElementById("login").addEventListener("click", async () => {
       const verifier = generarAleatorio(64);
       sessionStorage.setItem("pkce_verifier", verifier);
@@ -45,14 +62,18 @@
       window.location.href = url.toString();
     });
 
-    // Nuevo: comprobar si Cognito nos ha devuelto un código
     const codigo = new URLSearchParams(window.location.search).get("code");
     const estado = document.getElementById("estado");
     if (codigo) {
-      estado.textContent = "Código recibido de Cognito. Pendiente de canjear.";
+      estado.textContent = "Código recibido de Cognito. Canjeando...";
+      canjearCodigo(codigo).then(datos => {
+        estado.textContent = datos.id_token
+          ? "Sesión iniciada. Tokens recibidos."
+          : "Error al canjear el código: " + (datos.error || "desconocido");
+      });
     } else {
       estado.textContent = "Página inicial. No hay sesión iniciada.";
     }
   </script>
 </body>
-</html>
+</html>	 
