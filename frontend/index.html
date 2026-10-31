@@ -8,11 +8,19 @@
   <h1>Gestión de incidencias</h1>
   <p id="estado">Cargando...</p>
   <button id="login">Iniciar sesión</button>
+  <button id="logout" hidden>Cerrar sesión</button>
 
   <script>
     const COGNITO_DOMAIN = "https://eu-west-1hv919bloz.auth.eu-west-1.amazoncognito.com";
     const CLIENT_ID = "51k0hhrmfhv2gq43724djc1mf4";
     const REDIRECT_URI = "https://d2kqqlxt0valpy.cloudfront.net";
+
+    const estado = document.getElementById("estado");
+    const botonLogin = document.getElementById("login");
+    const botonLogout = document.getElementById("logout");
+
+    // Tokens solo en memoria: se pierden al recargar la página
+    let tokens = null;
 
     function generarAleatorio(longitud) {
       const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
@@ -30,8 +38,17 @@
         .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     }
 
+    function decodificarJwt(token) {
+      const payload = token.split(".")[1]
+        .replace(/-/g, "+").replace(/_/g, "/");
+      const relleno = "=".repeat((4 - payload.length % 4) % 4);
+      const bytes = Uint8Array.from(atob(payload + relleno), c => c.charCodeAt(0));
+      return JSON.parse(new TextDecoder().decode(bytes));
+    }
+
     async function canjearCodigo(codigo) {
       const verifier = sessionStorage.getItem("pkce_verifier");
+      sessionStorage.removeItem("pkce_verifier");
       const cuerpo = new URLSearchParams({
         grant_type: "authorization_code",
         client_id: CLIENT_ID,
@@ -47,7 +64,14 @@
       return respuesta.json();
     }
 
-    document.getElementById("login").addEventListener("click", async () => {
+    function mostrarSesion() {
+      const datos = decodificarJwt(tokens.id_token);
+      estado.textContent = "Sesión iniciada como " + datos.email;
+      botonLogin.hidden = true;
+      botonLogout.hidden = false;
+    }
+
+    botonLogin.addEventListener("click", async () => {
       const verifier = generarAleatorio(64);
       sessionStorage.setItem("pkce_verifier", verifier);
       const challenge = base64url(await sha256(verifier));
@@ -62,18 +86,28 @@
       window.location.href = url.toString();
     });
 
+    botonLogout.addEventListener("click", () => {
+      tokens = null;
+      estado.textContent = "Página inicial. No hay sesión iniciada.";
+      botonLogin.hidden = false;
+      botonLogout.hidden = true;
+    });
+
     const codigo = new URLSearchParams(window.location.search).get("code");
-    const estado = document.getElementById("estado");
     if (codigo) {
+      history.replaceState({}, "", window.location.pathname);
       estado.textContent = "Código recibido de Cognito. Canjeando...";
       canjearCodigo(codigo).then(datos => {
-        estado.textContent = datos.id_token
-          ? "Sesión iniciada. Tokens recibidos."
-          : "Error al canjear el código: " + (datos.error || "desconocido");
+        if (datos.id_token) {
+          tokens = datos;
+          mostrarSesion();
+        } else {
+          estado.textContent = "Error al canjear el código: " + (datos.error || "desconocido");
+        }
       });
     } else {
       estado.textContent = "Página inicial. No hay sesión iniciada.";
     }
   </script>
 </body>
-</html>	 
+</html>
