@@ -25,3 +25,9 @@
 - Flujo de concesión de código de autorización, con los ámbitos OpenID, correo electrónico y perfil.
 - Prueba: registro e inicio de sesión completados, con redirección a CloudFront.
 - Mejoras posibles: activar MFA y limitar el registro si la aplicación fuera de uso real, por ejemplo, para que solo se puedan registrar personas de una organizacion con un correo especifico.
+
+- ## Fase 3: datos
+
+- Clave KMS gestionada por el cliente, con alias incidencias-dynamo. Cifra la tabla. Cuesta alrededor de 1 $ al mes.
+- Tabla incidencias en eu-west-1: clave de partición userId, clave de orden incidentId, modo on-demand y cifrado con KMS.
+- Aislamiento por usuario: no se controla con IAM, porque IAM no conoce qué usuario de Cognito hace cada petición. Lo hará el código de la Lambda, comprobando el userId del token, en la fase 4.
