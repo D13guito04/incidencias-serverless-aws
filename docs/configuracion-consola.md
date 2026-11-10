@@ -31,3 +31,15 @@
 - Clave KMS gestionada por el cliente, con alias incidencias-dynamo. Cifra la tabla. Cuesta alrededor de 1 $ al mes.
 - Tabla incidencias en eu-west-1: clave de partición userId, clave de orden incidentId, modo on-demand y cifrado con KMS.
 - Aislamiento por usuario: no se controla con IAM, porque IAM no conoce qué usuario de Cognito hace cada petición. Lo hará el código de la Lambda, comprobando el userId del token, en la fase 4.
+
+-**## Fase 4: API y funciones** 
+
+- API HTTP con autorizador JWT de Cognito, que valida el ID token.
+- Rutas: POST /incidencias para crear, GET /incidencias para listar y PATCH /incidencias/{incidentId} para cambiar el estado. Las tres exigen token.
+- Funciones Lambda con rol y permisos mínimos:
+  - crear-incidencia: escribir en la tabla y usar la clave KMS.
+  - listar-incidencias: consultar la tabla y descifrar con la clave KMS.
+  - cambiar-estado: actualizar filas de la tabla y usar la clave KMS. Solo modifica incidencias que existan para el usuario del token.
+- Sin token, la API responde 401 antes de llegar al código de las funciones.
+- CORS limitado al origen de CloudFront.
+- Pruebas: sin token, 401. Con token válido, crear devuelve 201, listar devuelve solo las incidencias del usuario y cambiar estado devuelve 200. 
