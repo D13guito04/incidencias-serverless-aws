@@ -1,113 +1,93 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Incidencias</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Registra y gestiona tus incidencias.">
+<title>Gestión de incidencias</title>
+<style>
+:root{color-scheme:light;--primary:#173B47;--accent:#E17B44;--bg:#EFF3F2;--surface:#fff;--text:#173139;--muted:#5E7074;--border:#D7E1DF;--danger:#A64036;--success:#2F7056;--high:#CC6340;--medium:#D39B33;--low:#4E8278;--radius:.75rem;--font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}html{scrollbar-color:#87999B var(--bg);scrollbar-width:thin}body{min-width:320px;margin:0;background:var(--bg);color:var(--text);font:1rem/1.55 var(--font)}[hidden]{display:none!important}button,input,textarea,select{font:inherit}
+button{min-height:44px;border:1px solid transparent;border-radius:.45rem;padding:.6rem .9rem;font-weight:650;cursor:pointer;transition:background-color 140ms ease,transform 140ms ease}button:hover:not(:disabled){transform:translateY(-1px)}button:disabled{cursor:wait;opacity:.68;transform:none}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible,h3:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.skip{position:absolute;z-index:2;top:.5rem;left:.5rem;transform:translateY(-160%);padding:.6rem .9rem;background:#fff;color:var(--primary)}.skip:focus{transform:translateY(0)}
+.app-header{background:var(--primary);color:#fff}.header-inner,.page{width:min(100% - 2.5rem,76rem);margin-inline:auto}.header-inner{min-height:5.25rem;display:flex;align-items:center;justify-content:space-between;gap:1.25rem}
+.brand{display:flex;align-items:center;gap:.8rem}.brand-mark{width:2.35rem;height:2.35rem;display:flex;align-items:center;justify-content:center;gap:.22rem;border-radius:.55rem;background:var(--accent)}.brand-mark span{width:.23rem;height:1.05rem;border-radius:99px;background:#fff}.brand-mark span:last-child{height:.68rem}
+.brand-kicker,.eyebrow{margin:0;color:var(--muted);font-size:.72rem;font-weight:750;letter-spacing:.1em;line-height:1.35;text-transform:uppercase}.brand-kicker{color:#C7D6D7}.brand-title{margin:.12rem 0 0;font-size:1rem;font-weight:720}
+.header-actions{display:flex;align-items:center;justify-content:flex-end;gap:.7rem}#estado{max-width:22rem;margin:0;color:#E0E9E8;font-size:.82rem}.btn-header{background:var(--accent);color:#fff}.btn-header:hover:not(:disabled){background:#C96335}.btn-logout{border-color:#8FA5A7;background:transparent;color:#fff}.btn-logout:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.page{padding:clamp(2rem,5vw,3.5rem) 0 2rem}.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;margin-bottom:1.7rem}h1{margin:.35rem 0 .6rem;color:var(--primary);font-size:clamp(2rem,4vw,2.8rem);font-weight:730;letter-spacing:-.055em;line-height:1.08}.intro-copy{max-width:44rem;margin:0;color:var(--muted)}
+.account{max-width:18rem;border:1px solid #E8B294;border-radius:99px;padding:.6rem .9rem;background:#FFF5EF;color:var(--primary);font-size:.8rem;overflow-wrap:anywhere}.account-label{margin-right:.35rem;color:#86533B;font-weight:700}.notice{margin:0 0 1.5rem;border:1px solid #E3B1AC;border-radius:var(--radius);padding:.8rem 1rem;background:#FFF4F2;color:#762F2A}
+.workspace{display:grid;grid-template-columns:minmax(17rem,.78fr) minmax(0,1.22fr);align-items:start;gap:1.25rem}.panel{min-width:0;border:1px solid var(--border);border-radius:1rem;padding:clamp(1rem,2.2vw,1.5rem);background:var(--surface);box-shadow:0 12px 32px rgba(23,49,57,.06)}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.5rem}h2{margin:.25rem 0 0;color:var(--primary);font-size:1.35rem;font-weight:720;letter-spacing:-.035em;line-height:1.2}.panel-note{margin:0 0 1.25rem;color:var(--muted);font-size:.86rem}.marker{width:2rem;height:2rem;display:grid;place-items:center;border-radius:.45rem;background:#EAF1F0;color:var(--primary);font:600 1.2rem var(--mono)}
+.field{margin-top:1rem}.field label{display:block;margin-bottom:.35rem;color:var(--text);font-size:.9rem;font-weight:700}.required{color:var(--danger)}.field input,.field textarea,.field select,.status-select{width:100%;min-height:2.8rem;border:1px solid #B8C7C5;border-radius:.45rem;padding:.65rem .75rem;background:#fff;color:var(--text)}.field textarea{min-height:7rem;resize:none}[aria-invalid=true]{border-color:var(--danger)!important;box-shadow:0 0 0 1px var(--danger)}
+.help,.field-error{margin:.35rem 0 0;font-size:.77rem}.help{color:var(--muted)}.field-error{color:var(--danger);font-weight:650}.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover:not(:disabled){background:#0F303A}.btn-secondary{border-color:#AABBB9;background:#fff;color:var(--primary)}.btn-secondary:hover:not(:disabled){background:#F2F7F6}.create-actions{margin-top:1.25rem}#crear-incidencia{width:100%;min-width:11rem}.button-label{display:inline-block;min-width:9.5ch}.feedback{min-height:1.45rem;margin:.65rem 0 0;color:var(--success);font-size:.84rem}.feedback.is-error,.status-feedback.is-error{color:var(--danger)}
+.list-tools{display:flex;align-items:center;gap:.55rem}.count{min-width:5.2rem;border:1px solid var(--border);border-radius:99px;padding:.3rem .6rem;background:#F5F8F7;color:var(--primary);font:.74rem var(--mono);text-align:center;white-space:nowrap}.btn-small{min-height:2.35rem;padding:.4rem .65rem;font-size:.8rem}.list-status{margin:.85rem 0;color:var(--muted);font-size:.88rem}.list-status.is-error{border-left:3px solid var(--danger);padding-left:.7rem;color:#762F2A}
+.incident-list{display:grid;gap:.8rem;margin:0;padding:0;list-style:none}.incident-card{position:relative;min-width:0;border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1rem .9rem 1.15rem;background:#fff;overflow-wrap:anywhere}.incident-card:before{position:absolute;top:.8rem;bottom:.8rem;left:0;width:4px;border-radius:0 99px 99px 0;background:var(--low);content:""}.incident-card[data-priority=alta]:before{background:var(--high)}.incident-card[data-priority=media]:before{background:var(--medium)}.incident-card[data-priority=baja]:before{background:var(--low)}.incident-card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.incident-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem}.incident-head h3{margin:0;color:var(--primary);font-size:1.02rem;line-height:1.35;letter-spacing:-.015em}.tag{display:inline-flex;align-items:center;min-height:1.55rem;border:1px solid var(--border);border-radius:99px;padding:.15rem .55rem;font-size:.7rem;font-weight:700;line-height:1.3;white-space:nowrap}.priority[data-value=alta]{border-color:#E7B3A5;background:#FFF1EC;color:#873E28}.priority[data-value=media]{border-color:#E8D29E;background:#FFF8E8;color:#765014}.priority[data-value=baja]{border-color:#B8D1CA;background:#EEF7F4;color:#315E53}
+.description{margin:.65rem 0;color:#3F5459;font-size:.88rem;white-space:pre-wrap}.meta{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;color:var(--muted);font-size:.76rem}.meta time{font-family:var(--mono);font-variant-numeric:tabular-nums}.state[data-value=abierta]{border-color:#E8D29E;background:#FFF8E8;color:#765014}.state[data-value="en curso"]{border-color:#B8CDD2;background:#EDF5F7;color:#325B69}.state[data-value=cerrada]{border-color:#B8D1CA;background:#EEF7F4;color:#315E53}
+.status-form{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:.65rem;margin-top:.9rem;border-top:1px solid #E8EEED;padding-top:.8rem}.status-field label{display:block;margin-bottom:.3rem;color:var(--muted);font-size:.75rem;font-weight:700}.status-select{min-height:2.5rem;padding:.45rem .6rem;font-size:.82rem}.status-form button{min-height:2.5rem;min-width:7.8rem;padding:.45rem .65rem;font-size:.8rem}.status-feedback{grid-column:1/-1;min-height:1.2rem;margin:0;color:var(--success);font-size:.76rem}
+.footer{margin-top:1.5rem;border-top:1px solid var(--border);padding:1rem 0;color:var(--muted);font-size:.76rem}.footer p{margin:0}
+@media(max-width:940px){.workspace{grid-template-columns:1fr}}@media(max-width:620px){.header-inner{width:min(100% - 1.5rem,76rem);min-height:0;align-items:flex-start;flex-direction:column;padding:.85rem 0}.header-actions{width:100%;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}#estado{flex:1 1 100%;max-width:none}.page{width:min(100% - 1.5rem,76rem);padding-top:1.75rem}.intro{align-items:flex-start;flex-direction:column;gap:.85rem}.panel{padding:1rem}.incident-head{flex-direction:column;gap:.45rem}.status-form{grid-template-columns:minmax(0,1fr)}.status-form button{width:100%}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+@media(forced-colors:active){html{scrollbar-color:auto}button,input,textarea,select,.panel,.incident-card{border:1px solid CanvasText}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid Highlight}.incident-card:before{background:Highlight}}
+.header-actions form,.list-tools form{margin:0}
+</style>
 </head>
 <body>
-  <h1>Gestión de incidencias</h1>
-  <p id="estado">Cargando...</p>
-  <button id="login">Iniciar sesión</button>
-  <button id="logout" hidden>Cerrar sesión</button>
-
-  <script>
-    const COGNITO_DOMAIN = "https://eu-west-1hv919bloz.auth.eu-west-1.amazoncognito.com";
-    const CLIENT_ID = "51k0hhrmfhv2gq43724djc1mf4";
-    const REDIRECT_URI = "https://d2kqqlxt0valpy.cloudfront.net";
-
-    const estado = document.getElementById("estado");
-    const botonLogin = document.getElementById("login");
-    const botonLogout = document.getElementById("logout");
-
-    // Tokens solo en memoria: se pierden al recargar la página
-    let tokens = null;
-
-    function generarAleatorio(longitud) {
-      const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
-      const valores = crypto.getRandomValues(new Uint8Array(longitud));
-      return Array.from(valores, v => caracteres[v % caracteres.length]).join("");
-    }
-
-    async function sha256(texto) {
-      const datos = new TextEncoder().encode(texto);
-      return new Uint8Array(await crypto.subtle.digest("SHA-256", datos));
-    }
-
-    function base64url(bytes) {
-      return btoa(String.fromCharCode(...bytes))
-        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-    }
-
-    function decodificarJwt(token) {
-      const payload = token.split(".")[1]
-        .replace(/-/g, "+").replace(/_/g, "/");
-      const relleno = "=".repeat((4 - payload.length % 4) % 4);
-      const bytes = Uint8Array.from(atob(payload + relleno), c => c.charCodeAt(0));
-      return JSON.parse(new TextDecoder().decode(bytes));
-    }
-
-    async function canjearCodigo(codigo) {
-      const verifier = sessionStorage.getItem("pkce_verifier");
-      sessionStorage.removeItem("pkce_verifier");
-      const cuerpo = new URLSearchParams({
-        grant_type: "authorization_code",
-        client_id: CLIENT_ID,
-        code: codigo,
-        redirect_uri: REDIRECT_URI,
-        code_verifier: verifier
-      });
-      const respuesta = await fetch(COGNITO_DOMAIN + "/oauth2/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: cuerpo
-      });
-      return respuesta.json();
-    }
-
-    function mostrarSesion() {
-      const datos = decodificarJwt(tokens.id_token);
-      estado.textContent = "Sesión iniciada como " + datos.email;
-      botonLogin.hidden = true;
-      botonLogout.hidden = false;
-    }
-
-    botonLogin.addEventListener("click", async () => {
-      const verifier = generarAleatorio(64);
-      sessionStorage.setItem("pkce_verifier", verifier);
-      const challenge = base64url(await sha256(verifier));
-
-      const url = new URL(COGNITO_DOMAIN + "/login");
-      url.searchParams.set("client_id", CLIENT_ID);
-      url.searchParams.set("response_type", "code");
-      url.searchParams.set("scope", "openid email");
-      url.searchParams.set("redirect_uri", REDIRECT_URI);
-      url.searchParams.set("code_challenge_method", "S256");
-      url.searchParams.set("code_challenge", challenge);
-      window.location.href = url.toString();
-    });
-
-    botonLogout.addEventListener("click", () => {
-      tokens = null;
-      estado.textContent = "Página inicial. No hay sesión iniciada.";
-      botonLogin.hidden = false;
-      botonLogout.hidden = true;
-    });
-
-    const codigo = new URLSearchParams(window.location.search).get("code");
-    if (codigo) {
-      history.replaceState({}, "", window.location.pathname);
-      estado.textContent = "Código recibido de Cognito. Canjeando...";
-      canjearCodigo(codigo).then(datos => {
-        if (datos.id_token) {
-          tokens = datos;
-          mostrarSesion();
-        } else {
-          estado.textContent = "Error al canjear el código: " + (datos.error || "desconocido");
-        }
-      });
-    } else {
-      estado.textContent = "Página inicial. No hay sesión iniciada.";
-    }
-  </script>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="app-header"><div class="header-inner">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"><span></span><span></span></span><div><p class="brand-kicker">Centro de operaciones</p><p class="brand-title">Incidencias</p></div></div>
+  <div class="header-actions"><p id="estado" role="status" aria-live="polite" aria-atomic="true">Página inicial. Inicia sesión para gestionar incidencias.</p><form id="login-form" novalidate><button id="login" class="btn-header" type="submit">Iniciar sesión</button></form><form id="logout-form" novalidate><button id="logout" class="btn-logout" type="submit" hidden>Cerrar sesión de esta página</button></form></div>
+</div></header>
+<main id="contenido" class="page">
+  <section class="intro" aria-labelledby="titulo-pagina"><div><p class="eyebrow">Registro · Seguimiento · Resolución</p><h1 id="titulo-pagina">Gestión de incidencias</h1><p class="intro-copy">Registra un problema, asigna su prioridad y sigue su estado desde un único lugar.</p></div><div id="resumen-cuenta" class="account" hidden><span class="account-label">Sesión de</span><span id="correo-usuario"></span></div></section>
+  <p id="aviso-sesion" class="notice" role="alert" hidden></p>
+  <div id="zona-trabajo" class="workspace" hidden>
+    <section class="panel" aria-labelledby="titulo-formulario"><header class="panel-head"><div><p class="eyebrow">Nuevo registro</p><h2 id="titulo-formulario">Crear incidencia</h2></div><span class="marker" aria-hidden="true">+</span></header>
+      <p class="panel-note">Los campos con <span class="required">*</span> son obligatorios.</p>
+      <form id="form-incidencia" novalidate>
+        <div class="field"><label for="titulo">Título <span class="required" aria-hidden="true">*</span></label><input id="titulo" name="titulo" type="text" autocomplete="off" required aria-describedby="titulo-ayuda titulo-error"><p id="titulo-ayuda" class="help">Resume el problema en una frase.</p><p id="titulo-error" class="field-error" hidden></p></div>
+        <div class="field"><label for="descripcion">Descripción</label><textarea id="descripcion" name="descripcion" rows="4" class="resize-none" aria-describedby="descripcion-ayuda"></textarea><p id="descripcion-ayuda" class="help">Añade detalles útiles. Es opcional.</p></div>
+        <div class="field"><label for="prioridad">Prioridad <span class="required" aria-hidden="true">*</span></label><select id="prioridad" name="prioridad" required aria-describedby="prioridad-error"><option value="">Elige una prioridad</option><option value="baja">Baja</option><option value="media">Media</option><option value="alta">Alta</option></select><p id="prioridad-error" class="field-error" hidden></p></div>
+        <div class="create-actions"><button id="crear-incidencia" class="btn-primary" type="submit"><span class="button-label">Crear incidencia</span></button></div><p id="mensaje-creacion" class="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
+      </form>
+    </section>
+    <section class="panel" aria-labelledby="titulo-lista"><header class="panel-head"><div><p class="eyebrow">Tu registro</p><h2 id="titulo-lista">Incidencias</h2></div><div class="list-tools"><span id="total-incidencias" class="count">0 incidencias</span><form id="refresh-form" novalidate><button id="actualizar-lista" class="btn-secondary btn-small" type="submit">Actualizar</button></form></div></header><p id="mensaje-lista" class="list-status" role="status" aria-live="polite" aria-atomic="true">Inicia sesión para cargar tus incidencias.</p><ul id="lista-incidencias" class="incident-list" aria-label="Lista de incidencias"></ul></section>
+  </div>
+  <footer class="footer"><p>Cada cuenta ve sus propias incidencias. Los cambios se guardan al confirmarlos.</p></footer>
+</main>
+<script>
+const COGNITO="https://eu-west-1hv919bloz.auth.eu-west-1.amazoncognito.com",CLIENT_ID="51k0hhrmfhv2gq43724djc1mf4",REDIRECT="https://d2kqqlxt0valpy.cloudfront.net",API="https://lhx830ksw5.execute-api.eu-west-1.amazonaws.com";
+const VALID_STATES=["abierta","en curso","cerrada"];
+const byId=id=>document.getElementById(id);
+const status=byId("estado"),login=byId("login"),logout=byId("logout"),loginForm=byId("login-form"),logoutForm=byId("logout-form"),refreshForm=byId("refresh-form"),zone=byId("zona-trabajo"),notice=byId("aviso-sesion"),account=byId("resumen-cuenta"),email=byId("correo-usuario"),form=byId("form-incidencia"),title=byId("titulo"),titleError=byId("titulo-error"),priority=byId("prioridad"),priorityError=byId("prioridad-error"),create=byId("crear-incidencia"),createMessage=byId("mensaje-creacion"),list=byId("lista-incidencias"),listMessage=byId("mensaje-lista"),count=byId("total-incidencias"),refresh=byId("actualizar-lista");
+let tokens=null,records=[],loadSequence=0,selectSequence=0;
+class ApiError extends Error{constructor(code){super("API error");this.status=code}}
+function make(tag,cls,text){const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node}
+function randomValue(size){const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";return Array.from(crypto.getRandomValues(new Uint8Array(size)),v=>chars[v%chars.length]).join("")}
+async function digest(value){return new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)))}
+function b64url(bytes){return btoa(String.fromCharCode(...bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"")}
+function jwtClaims(token){const p=token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/"),pad="=".repeat((4-p.length%4)%4),raw=Uint8Array.from(atob(p+pad),c=>c.charCodeAt(0));return JSON.parse(new TextDecoder().decode(raw))}
+async function exchange(code){const verifier=sessionStorage.getItem("pkce_verifier");sessionStorage.removeItem("pkce_verifier");if(!verifier)throw Error("Falta PKCE");const body=new URLSearchParams({grant_type:"authorization_code",client_id:CLIENT_ID,code,redirect_uri:REDIRECT,code_verifier:verifier}),res=await fetch(COGNITO+"/oauth2/token",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body}),data=await res.json().catch(()=>({}));if(!res.ok||!data.id_token)throw Error("Canje fallido");return data}
+function clearField(field,error){field.removeAttribute("aria-invalid");error.textContent="";error.hidden=true}
+function fieldError(field,error,text){field.setAttribute("aria-invalid","true");error.textContent=text;error.hidden=false}
+function clearPrivate(){zone.hidden=true;account.hidden=true;email.textContent="";list.replaceChildren();records=[];count.textContent="0 incidencias";createMessage.textContent="";createMessage.classList.remove("is-error");listMessage.textContent="Inicia sesión para cargar tus incidencias.";listMessage.classList.remove("is-error");form.reset();clearField(title,titleError);clearField(priority,priorityError)}
+function expireSession(){tokens=null;clearPrivate();login.hidden=false;login.disabled=false;logout.hidden=true;notice.textContent="La sesión ha caducado. Inicia sesión de nuevo para continuar.";notice.hidden=false;status.textContent="Sesión caducada."}
+async function request(path,options){if(!tokens||!tokens.id_token)throw new ApiError(401);const cfg=Object.assign({},options||{});cfg.headers=Object.assign({},cfg.headers||{},{Authorization:"Bearer "+tokens.id_token});if(cfg.body)cfg.headers["Content-Type"]="application/json";const res=await fetch(API+path,cfg),data=await res.json().catch(()=>null);if(res.status===401){expireSession();throw new ApiError(401)}if(!res.ok)throw new ApiError(res.status);return data}
+function priorityName(v){return({alta:"Alta",media:"Media",baja:"Baja"})[v]||"Sin prioridad"}
+function stateName(v){return({abierta:"Abierta","en curso":"En curso",cerrada:"Cerrada"})[v]||"Sin estado"}
+function formatDate(v){if(!v||Number.isNaN(new Date(v).getTime()))return"Fecha no disponible";return new Intl.DateTimeFormat("es-ES",{dateStyle:"medium",timeStyle:"short"}).format(new Date(v))}
+function render(focusId){list.replaceChildren();let focusTitle=null;records.forEach(item=>{const p=["alta","media","baja"].includes(item.prioridad)?item.prioridad:"media",s=VALID_STATES.includes(item.estado)?item.estado:"abierta",li=make("li","incident-card");li.dataset.priority=p;const article=document.createElement("article"),head=make("div","incident-head"),h=make("h3","",item.titulo||"Sin título");h.tabIndex=-1;const pr=make("span","tag priority",priorityName(p));pr.dataset.value=p;head.append(h,pr);const desc=make("p","description",item.descripcion||"Sin descripción."),meta=make("div","meta"),time=make("time","",formatDate(item.creada));if(item.creada)time.dateTime=item.creada;const badge=make("span","tag state",stateName(s));badge.dataset.value=s;meta.append(time,badge);
+const edit=make("form","status-form");edit.noValidate=true;const field=make("div","status-field"),id="estado-"+(++selectSequence),label=make("label","","Estado"),select=make("select","status-select");label.htmlFor=id;select.id=id;select.setAttribute("aria-label","Nuevo estado para "+(item.titulo||"esta incidencia"));[["abierta","Abierta"],["en curso","En curso"],["cerrada","Cerrada"]].forEach(pair=>{const opt=make("option","",pair[1]);opt.value=pair[0];select.append(opt)});select.value=s;field.append(label,select);const save=make("button","btn-secondary","Guardar estado");save.type="submit";const feedback=make("p","status-feedback","");feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");feedback.setAttribute("aria-atomic","true");edit.append(field,save,feedback);
+edit.addEventListener("submit",async ev=>{ev.preventDefault();const next=select.value;if(!VALID_STATES.includes(next)){feedback.classList.add("is-error");feedback.setAttribute("role","alert");feedback.textContent="Elige un estado válido.";select.focus();return}save.disabled=true;select.disabled=true;save.setAttribute("aria-busy","true");save.textContent="Guardando…";feedback.textContent="";feedback.classList.remove("is-error");try{const updated=await request("/incidencias/"+encodeURIComponent(item.incidentId),{method:"PATCH",body:JSON.stringify({estado:next})}),saved=updated&&VALID_STATES.includes(updated.estado)?updated.estado:next;item.estado=saved;badge.dataset.value=saved;badge.textContent=stateName(saved);select.value=saved;feedback.textContent="Estado actualizado.";save.focus()}catch(err){if(err.status===401)return;feedback.classList.add("is-error");feedback.setAttribute("role","alert");feedback.textContent=err.status===404?"No se encontró esa incidencia. Actualiza la lista para sincronizarla.":err.status===400?"El estado elegido no es válido.":err.status>=500?"No se pudo guardar. El estado mostrado no se ha actualizado.":"No se pudo contactar con la API. Comprueba la conexión e inténtalo de nuevo."}finally{if(tokens){save.disabled=false;select.disabled=false;save.removeAttribute("aria-busy");save.textContent="Guardar estado"}}});
+article.append(head,desc,meta,edit);li.append(article);list.append(li);if(item.incidentId===focusId)focusTitle=h});count.textContent=records.length+(records.length===1?" incidencia":" incidencias");if(!records.length){listMessage.hidden=false;listMessage.classList.remove("is-error");listMessage.textContent="Aún no tienes incidencias. Crea la primera desde el formulario."}else listMessage.hidden=true;list.removeAttribute("aria-busy");return focusTitle}
+async function loadRecords(){if(!tokens)return;const seq=++loadSequence;listMessage.hidden=false;listMessage.classList.remove("is-error");listMessage.textContent=records.length?"Actualizando incidencias…":"Cargando incidencias…";list.setAttribute("aria-busy","true");refresh.disabled=true;refresh.textContent="Actualizando…";try{const data=await request("/incidencias",{method:"GET"});if(seq!==loadSequence)return;if(!data||!Array.isArray(data.incidencias))throw new ApiError(502);records=data.incidencias.slice().sort((a,b)=>String(b.creada||"").localeCompare(String(a.creada||"")));render()}catch(err){if(err.status===401||seq!==loadSequence)return;listMessage.hidden=false;listMessage.classList.add("is-error");listMessage.textContent=records.length?"No se pudo actualizar. Se mantienen los datos mostrados; inténtalo de nuevo.":"No se pudieron cargar las incidencias. Comprueba la conexión e inténtalo de nuevo.";list.removeAttribute("aria-busy")}finally{if(seq===loadSequence){refresh.disabled=false;refresh.textContent="Actualizar"}}}
+form.addEventListener("submit",async ev=>{ev.preventDefault();createMessage.textContent="";createMessage.classList.remove("is-error");let first=null;const clean=title.value.trim(),p=priority.value;if(!clean){fieldError(title,titleError,"Escribe un título para la incidencia.");first=title}else clearField(title,titleError);if(!["baja","media","alta"].includes(p)){fieldError(priority,priorityError,"Elige una prioridad.");if(!first)first=priority}else clearField(priority,priorityError);if(first){first.focus();return}create.disabled=true;create.setAttribute("aria-busy","true");create.querySelector(".button-label").textContent="Creando…";try{const item=await request("/incidencias",{method:"POST",body:JSON.stringify({titulo:clean,descripcion:byId("descripcion").value.trim(),prioridad:p})});if(!item||!item.incidentId){createMessage.classList.add("is-error");createMessage.textContent="No pude confirmar el registro. Actualiza la lista antes de repetir la solicitud.";await loadRecords();return}loadSequence++;list.removeAttribute("aria-busy");refresh.disabled=false;refresh.textContent="Actualizar";records=records.filter(row=>row.incidentId!==item.incidentId);records.unshift(item);records.sort((a,b)=>String(b.creada||"").localeCompare(String(a.creada||"")));form.reset();clearField(title,titleError);clearField(priority,priorityError);const focus=render(item.incidentId);createMessage.textContent="Incidencia creada.";if(focus)focus.focus()}catch(err){createMessage.classList.add("is-error");createMessage.textContent=err.status===401?"":err.status===400?"Revisa el título y la prioridad.":err.status>=500?"AWS no pudo registrar la incidencia. El formulario se conserva; inténtalo de nuevo.":"No se pudo contactar con la API. Comprueba la conexión e inténtalo de nuevo."}finally{if(tokens){create.disabled=false;create.removeAttribute("aria-busy");create.querySelector(".button-label").textContent="Crear incidencia"}}});
+title.addEventListener("input",()=>{if(title.value.trim())clearField(title,titleError)});priority.addEventListener("change",()=>{if(["baja","media","alta"].includes(priority.value))clearField(priority,priorityError)});refreshForm.addEventListener("submit",ev=>{ev.preventDefault();loadRecords()});
+loginForm.addEventListener("submit",async ev=>{ev.preventDefault();login.disabled=true;status.textContent="Preparando el inicio de sesión…";try{const verifier=randomValue(64),oauthState=randomValue(32);sessionStorage.setItem("pkce_verifier",verifier);sessionStorage.setItem("oauth_state",oauthState);const challenge=b64url(await digest(verifier)),url=new URL(COGNITO+"/login");url.searchParams.set("client_id",CLIENT_ID);url.searchParams.set("response_type","code");url.searchParams.set("scope","openid email");url.searchParams.set("redirect_uri",REDIRECT);url.searchParams.set("code_challenge_method","S256");url.searchParams.set("code_challenge",challenge);url.searchParams.set("state",oauthState);window.location.href=url.toString()}catch(err){status.textContent="No se pudo preparar el inicio de sesión. Recarga la página e inténtalo de nuevo.";login.disabled=false}});
+logoutForm.addEventListener("submit",ev=>{ev.preventDefault();tokens=null;sessionStorage.removeItem("pkce_verifier");sessionStorage.removeItem("oauth_state");clearPrivate();login.hidden=false;login.disabled=false;logout.hidden=true;notice.hidden=true;status.textContent="Sesión cerrada en esta página."});
+const params=new URLSearchParams(location.search),code=params.get("code"),oauthError=params.get("error");if(code||oauthError)history.replaceState({},"",location.pathname);
+if(oauthError){sessionStorage.removeItem("pkce_verifier");sessionStorage.removeItem("oauth_state");status.textContent="El inicio de sesión no se completó. Puedes intentarlo de nuevo."}
+else if(code){const returned=params.get("state"),stored=sessionStorage.getItem("oauth_state");sessionStorage.removeItem("oauth_state");if(!stored||returned!==stored){sessionStorage.removeItem("pkce_verifier");status.textContent="No se pudo validar el inicio de sesión. Empieza de nuevo."}else{status.textContent="Canjeando el código de Cognito…";exchange(code).then(data=>{tokens=data;const claims=jwtClaims(tokens.id_token);status.textContent="Sesión iniciada como "+(claims.email||"usuario");login.hidden=true;login.disabled=false;logout.hidden=false;notice.hidden=true;account.hidden=false;email.textContent=claims.email||"Usuario autenticado";zone.hidden=false;loadRecords()}).catch(()=>{status.textContent="No se pudo completar el inicio de sesión. Vuelve a intentarlo.";login.hidden=false;login.disabled=false})}}
+</script>
 </body>
 </html>

@@ -1,0 +1,16 @@
+{
+  "profile": "product-admin",
+  "sourceRoots": [
+    "frontend"
+  ],
+  "locale": "es-ES",
+  "ownership": {
+    "Select/Listbox": "native"
+  },
+  "canonicalMap": "UX-CONTRACT.md",
+  "requiredCapabilities": [
+    "Select/Listbox",
+    "Form",
+    "CRUD"
+  ]
+}
