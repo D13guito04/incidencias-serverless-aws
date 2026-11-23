@@ -48,7 +48,7 @@
 
 | Operation | Trigger | Pending | Success destination | Success feedback | Failure recovery | Focus outcome | Source ref |
 |---|---|---|---|---|---|---|---|
-| Create | Submit the new incident form | Submit button disabled; label changes | New record appears at the top | “Incidencia creada.” | Keep values on API failure; reload list if response cannot be confirmed | Focus the new incident title | `frontend/index.html` |
+| Create | Submit the new incident form | Submit button disabled; label changes | New record appears at the top | “Incidencia creada.” | Keep values on API failure; if the API confirms the item was saved but SQS failed, refresh before retrying | Focus the new incident title | `frontend/index.html` |
 | Read | Login or select Actualizar | List announces loading; refresh button disabled | Own incidents replace the list | Count and records update | Preserve existing records and allow retry | Keep refresh control available | `frontend/index.html` |
 | Edit state | Submit a record's state form | Save and select disabled | Updated state shown on the same record | “Estado actualizado.” | Explain 400/404/API errors without changing displayed state | Return focus to save button | `frontend/index.html` |
 | Session expiry | API returns 401 | Clear in-memory session | Login prompt | Re-authentication message | User can sign in again | Login control remains available | `frontend/index.html` |
@@ -64,7 +64,7 @@
 
 - Mutations use pessimistic updates: the displayed state changes only after the API succeeds.
 - Duplicate submission is prevented by disabling the active submit button.
-- Create failures preserve form values. An ambiguous create response triggers a list reload before another attempt.
+- Create failures preserve form values. If queue delivery fails after persistence, the UI says the incident exists and asks for a list refresh before retry; an ambiguous response also triggers a list reload.
 - A 401 clears tokens held in memory and asks the user to sign in again.
 - A 404 during state update explains that the record was not found and offers list synchronization.
 - Late list responses are ignored after a newer request or a successful create.

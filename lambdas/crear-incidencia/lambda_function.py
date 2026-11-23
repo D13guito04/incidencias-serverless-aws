@@ -1,16 +1,22 @@
 import json
+import logging
 import os
 import uuid
 from datetime import datetime, timezone
 
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import BotoCoreError, ClientError
 
 TABLE_NAME = os.environ.get("TABLE_NAME", "incidencias")
+NOTIFICATION_QUEUE_URL = os.environ.get("NOTIFICATION_QUEUE_URL")
 PRIORIDADES = {"baja", "media", "alta"}
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 dynamodb = boto3.resource("dynamodb")
 tabla = dynamodb.Table(TABLE_NAME)
+sqs = boto3.client("sqs")
 
 
 def respuesta(codigo, cuerpo):
@@ -44,6 +50,7 @@ def lambda_handler(event, context):
     if not titulo or prioridad not in PRIORIDADES:
         return respuesta(400, {"error": "Faltan datos: titulo y prioridad (baja, media o alta)"})
 
+    creada = datetime.now(timezone.utc).isoformat()
     incidencia = {
         "userId": user_id,
         "incidentId": str(uuid.uuid4()),
@@ -51,13 +58,47 @@ def lambda_handler(event, context):
         "descripcion": descripcion,
         "prioridad": prioridad,
         "estado": "abierta",
-        "creada": datetime.now(timezone.utc).isoformat(),
+        "creada": creada,
     }
 
     try:
         tabla.put_item(Item=incidencia)
-    except ClientError as error:
-        print("Error al guardar la incidencia:", error)
+    except ClientError:
+        logger.exception("No se pudo guardar la incidencia")
         return respuesta(500, {"error": "No se pudo guardar la incidencia"})
 
+    event_id = str(uuid.uuid4())
+    mensaje = {
+        "eventId": event_id,
+        "eventType": "INCIDENT_CREATED",
+        "userId": user_id,
+        "incidentId": incidencia["incidentId"],
+        "createdAt": creada,
+    }
+
+    try:
+        if not NOTIFICATION_QUEUE_URL:
+            raise RuntimeError("Falta la variable NOTIFICATION_QUEUE_URL")
+        sqs.send_message(
+            QueueUrl=NOTIFICATION_QUEUE_URL,
+            MessageBody=json.dumps(mensaje, ensure_ascii=False),
+        )
+    except (BotoCoreError, ClientError, RuntimeError):
+        logger.exception(
+            "La incidencia se guardó, pero no se pudo encolar su auditoría",
+            extra={"incidentId": incidencia["incidentId"], "eventId": event_id},
+        )
+        return respuesta(
+            503,
+            {
+                "error": "La incidencia se guardó, pero la auditoría no se pudo encolar",
+                "saved": True,
+                "incidentId": incidencia["incidentId"],
+            },
+        )
+
+    logger.info(
+        "Incidencia creada y evento de auditoría encolado",
+        extra={"incidentId": incidencia["incidentId"], "eventId": event_id},
+    )
     return respuesta(201, incidencia)
